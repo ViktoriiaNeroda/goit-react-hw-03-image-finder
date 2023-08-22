@@ -10,6 +10,11 @@ export class App extends Component {
     images: [],
     currentPage: 1, 
     imagesPerPage: 12,
+    moreImages: true,
+  };
+
+  handleLoadMore = () => {
+    this.fetchImages(this.state.query);
   };
 
   fetchImages = query => {
@@ -20,34 +25,42 @@ export class App extends Component {
     axios
       .get(apiUrl)
       .then(response => {
+       if (response.data.hits.length === 0) {
+        this.setState({ moreImages: false });
+      } else {
         this.setState(prevState => ({
           images: [...prevState.images, ...response.data.hits], 
           currentPage: prevState.currentPage + 1,
+          hasMoreImages: true,
         }));
-      })
+      }
+    })
       .catch(error => {
         console.error('Error fetching images:', error);
       });
   };
 
-    handleLoadMore = () => {
-    this.fetchImages(this.state.query);
-  };
 
    handleSearchSubmit = query => {
-    this.setState({ query, images: [], currentPage: 1 }, () => {
+       this.setState({ query, images: [], currentPage: 1, moreImages: true }, () => {
       this.fetchImages(query);
+
     });
   };
 
   render() {
-    const { images } = this.state;
+    const { images, moreImages } = this.state;
 
     return (
       <div>
         <SearchBar onSubmit={this.handleSearchSubmit} />
         <GaleryImage images={images} />
-        {images.length > 0 && <LoadingMore onLoadMore={this.handleLoadMore} />}
+        {images.length > 0 && (
+          <>
+            <LoadingMore onLoadMore={this.handleLoadMore} />
+            {!moreImages && <p>No more images to load.</p>}
+          </>
+        )}
       </div>
     );
   }
