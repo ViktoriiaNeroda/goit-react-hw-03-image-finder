@@ -1,28 +1,36 @@
-import React, { useState } from 'react';
+import React, { Component } from 'react';
 import { StyledBtn, StyledForm, StyledInput } from './SearchBar.styled';
 
+export class SearchBar extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      query: '',
+    };
+  }
 
- export function SearchBar({ onSubmit }) {
-  const [query, setQuery] = useState('');
-
-  const handleChange = event => {
-    setQuery(event.target.value);
+  handleChange = event => {
+    this.setState({ query: event.target.value });
   };
 
-  const handleSubmit = event => {
+  handleSubmit = event => {
     event.preventDefault();
-    onSubmit(query);
+    this.props.onSubmit(this.state.query);
   };
-  
-  return (
-      <StyledForm onSubmit={handleSubmit}>
-      <StyledInput
-        type="text"
-        value={query}
-        onChange={handleChange}
-        placeholder="Search images..."
-      />
-      <StyledBtn type="submit">Search</StyledBtn>
-    </StyledForm>
-  );
+
+  render() {
+    const { query } = this.state;
+
+    return (
+      <StyledForm onSubmit={this.handleSubmit}>
+        <StyledInput
+          type="text"
+          value={query}
+          onChange={this.handleChange}
+          placeholder="Search images..."
+        />
+        <StyledBtn type="submit">Search</StyledBtn>
+      </StyledForm>
+    );
+  }
 }

@@ -9,7 +9,7 @@ export class App extends Component {
     query: '',
     images: [],
     currentPage: 1, 
-    imagesPerPage: 8,
+    imagesPerPage: 12,
   };
 
   fetchImages = query => {
@@ -22,7 +22,7 @@ export class App extends Component {
       .then(response => {
         this.setState(prevState => ({
           images: [...prevState.images, ...response.data.hits], 
-          page: prevState.page + 1, 
+          currentPage: prevState.currentPage + 1,
         }));
       })
       .catch(error => {
@@ -30,14 +30,24 @@ export class App extends Component {
       });
   };
 
+    handleLoadMore = () => {
+    this.fetchImages(this.state.query);
+  };
+
+   handleSearchSubmit = query => {
+    this.setState({ query, images: [], currentPage: 1 }, () => {
+      this.fetchImages(query);
+    });
+  };
+
   render() {
     const { images } = this.state;
 
     return (
       <div>
-        <SearchBar onSubmit={this.fetchImages} />
+        <SearchBar onSubmit={this.handleSearchSubmit} />
         <GaleryImage images={images} />
-        {images.length > 0 && <LoadingMore onLoadMore={this.fetchImages} />}
+        {images.length > 0 && <LoadingMore onLoadMore={this.handleLoadMore} />}
       </div>
     );
   }
