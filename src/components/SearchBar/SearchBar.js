@@ -25,6 +25,7 @@ export class SearchBar extends Component {
       <StyledForm onSubmit={this.handleSubmit}>
         <StyledInput
           type="text"
+          id="searchInput"
           value={query}
           onChange={this.handleChange}
           placeholder="Search images..."
